@@ -1,0 +1,77 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Utilisateur {
+  createdAt  DateTime             @default(now())
+  email      String?
+  id         String               @id @default(cuid())
+  motDePasse String?
+  nom        String?
+  role       EnumUtilisateurRole?
+  updatedAt  DateTime             @updatedAt
+}
+
+model Client {
+  adresse    String?
+  createdAt  DateTime    @default(now())
+  factures   Facture[]
+  id         String      @id @default(cuid())
+  livraisons Livraison[]
+  nomComplet String?
+  telephone  String?
+  updatedAt  DateTime    @updatedAt
+}
+
+model Produit {
+  categorie  String?
+  codeBarres String?
+  createdAt  DateTime @default(now())
+  id         String   @id @default(cuid())
+  image      String?
+  nom        String?
+  prixAchat  Float?
+  prixVente  Float?
+  reference  String?
+  stock      Int?
+  updatedAt  DateTime @updatedAt
+  variante   String?
+}
+
+model Livraison {
+  client            Client?   @relation(fields: [clientId], references: [id])
+  clientId          String?
+  convertiEnFacture Boolean?
+  createdAt         DateTime  @default(now())
+  date              DateTime?
+  id                String    @id @default(cuid())
+  ligneProduits     Json?
+  numero            String?
+  total             Float?
+  updatedAt         DateTime  @updatedAt
+}
+
+model Facture {
+  client         Client?   @relation(fields: [clientId], references: [id])
+  clientId       String?
+  createdAt      DateTime  @default(now())
+  date           DateTime?
+  id             String    @id @default(cuid())
+  ligneProduits  Json?
+  netAPayer      Float?
+  numero         String?
+  pdf            String?
+  statutPaiement String?
+  total          Float?
+  tva            Float?
+  updatedAt      DateTime  @updatedAt
+}
+
+enum EnumUtilisateurRole {
+  Option1
+}
